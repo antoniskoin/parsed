@@ -7,6 +7,7 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using parsed.Helpers;
 using parsed.Models;
 
 namespace parsed.Controllers
@@ -30,7 +31,9 @@ namespace parsed.Controllers
                 var results = new {
                     parsedText = result.ParsedText,
                     numberOfPages = result.NumberOfPages,
-                    numberOfWords = result.NumberOfWords
+                    numberOfWords = result.NumberOfWords,
+                    md5Hash = Checksum.HashMd5(Checksum.GetBytes(document)),
+                    sha256Hash = Checksum.HashSha256(Checksum.GetBytes(document))
                 };
 
                 return Json(results);
@@ -40,7 +43,7 @@ namespace parsed.Controllers
                 return BadRequest(new {error.Message});
             }
         }
-
+        
         private static ExtractionModel ExtractText(Stream stream)
         {
             var pdfReader = new PdfReader(stream);
